@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:quiz_app/theme/app_colors.dart';
 import '../models/quiz_model.dart';
@@ -55,41 +54,26 @@ class MockData {
     {'name': 'Geography', 'icon': '🗺️', 'color': AppColors.arrowGreen},
   ];
 
-  // --- Existing Quiz & Leaderboard Data ---
-  static final List<Quiz> quizzes = [
-    Quiz(
-      title: 'Math Quiz',
-      subject: 'Math',
-      topic: 'Algebra',
-      description: 'A fun quiz about basic algebra!',
-      color: AppColors.radiantOrange,
-      icon: Icons.calculate_rounded,
-      questions: [
-        Question(
-            questionText: 'What is x in x + 5 = 10?',
-            options: ['3', '4', '5', '6'],
-            correctAnswerIndex: 2)
-      ],
-    ),
-    Quiz(
-      title: 'Science Quiz',
-      subject: 'Science',
-      topic: 'Animals',
-      description: 'How much do you know about the animal kingdom?',
-      color: AppColors.radiantPink,
-      icon: Icons.pets,
-      questions: [
-        Question(
-            questionText: 'What is the fastest land animal?',
-            options: ['Lion', 'Tiger', 'Cheetah'],
-            correctAnswerIndex: 2)
-      ],
-    ),
-  ];
+  /// Data for the LeaderboardScreen.
+  /// This list has been expanded to provide a more complete view.
   static final List<LeaderboardUser> leaderboard = [
     LeaderboardUser(
         name: 'Daniel',
         score: 95,
         avatarUrl: 'https://i.pravatar.cc/150?u=daniel'),
+    LeaderboardUser(
+        name: 'Mia', score: 88, avatarUrl: 'https://i.pravatar.cc/150?u=mia'),
+    LeaderboardUser(
+        name: 'Leo', score: 82, avatarUrl: 'https://i.pravatar.cc/150?u=leo'),
+    LeaderboardUser(
+        name: 'Zoe', score: 75, avatarUrl: 'https://i.pravatar.cc/150?u=zoe'),
+    LeaderboardUser(
+        name: 'Alex', score: 74, avatarUrl: 'https://i.pravatar.cc/150?u=alex'),
+    LeaderboardUser(
+        name: 'Ruby', score: 68, avatarUrl: 'https://i.pravatar.cc/150?u=ruby'),
+    LeaderboardUser(
+        name: 'Finn', score: 65, avatarUrl: 'https://i.pravatar.cc/150?u=finn'),
+    LeaderboardUser(
+        name: 'Chloe', score: 61, avatarUrl: 'https://i.pravatar.cc/150?u=chloe'),
   ];
 }

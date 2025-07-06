@@ -1,0 +1,107 @@
+[
+    {
+      "subject": "Mathematics",
+      "topic": "Addition",
+      "color": "#FF8A5B",
+      "icon": "calculate",
+      "description": "A fun quiz about basic addition!",
+      "questions": [
+        {
+          "questionText": "What is 2 + 2?",
+          "options": ["3", "4", "5", "6"],
+          "correctAnswerIndex": 1
+        },
+        {
+          "questionText": "What is 10 + 5?",
+          "options": ["14", "15", "16", "17"],
+          "correctAnswerIndex": 1
+        },
+        {
+          "questionText": "What is 7 + 8?",
+          "options": ["15", "14", "13", "12"],
+          "correctAnswerIndex": 0
+        }
+      ]
+    },
+    {
+      "subject": "Science",
+      "topic": "Animals",
+      "color": "#FE5DA8",
+      "icon": "pets",
+      "description": "How much do you know about the animal kingdom?",
+      "questions": [
+        {
+          "questionText": "What is the fastest land animal?",
+          "options": ["Lion", "Tiger", "Cheetah"],
+          "correctAnswerIndex": 2
+        },
+        {
+          "questionText": "Which animal is known as the 'King of the Jungle'?",
+          "options": ["Elephant", "Lion", "Bear"],
+          "correctAnswerIndex": 1
+        }
+      ]
+    },
+    {
+      "subject": "Art",
+      "topic": "Colors",
+      "color": "#00E5FF",
+      "icon": "color_lens",
+      "description": "Test your knowledge of the color wheel!",
+      "questions": [
+        {
+          "questionText": "What color do you get when you mix red and blue?",
+          "options": ["Green", "Orange", "Purple"],
+          "correctAnswerIndex": 2
+        }
+      ]
+    },
+    {
+      "subject": "History",
+      "topic": "Ancient Rome",
+      "color": "#FFC94D",
+      "icon": "account_balance",
+      "description": "Travel back in time to the Roman Empire.",
+      "questions": [
+        {
+          "questionText": "Who was the first emperor of Rome?",
+          "options": ["Julius Caesar", "Augustus", "Nero"],
+          "correctAnswerIndex": 1
+        }
+      ]
+    },
+    {
+      "subject": "Music",
+      "topic": "Instruments",
+      "color": "#EF476F",
+      "icon": "music_note",
+      "description": "Can you identify these musical instruments?",
+      "questions": [
+        {
+          "questionText": "Which of these is a string instrument?",
+          "options": ["Flute", "Violin", "Drum"],
+          "correctAnswerIndex": 1
+        }
+      ]
+    },
+    {
+      "subject": "Geography",
+      "topic": "Capitals",
+      "color": "#2EC4B6",
+      "icon": "public",
+      "description": "How well do you know the world's capitals?",
+      "questions": [
+        {
+          "questionText": "What is the capital of France?",
+          "options": ["London", "Berlin", "Paris"],
+          "correctAnswerIndex": 2
+        },
+        {
+          "questionText": "What is the capital of Japan?",
+          "options": ["Beijing", "Seoul", "Tokyo"],
+          "correctAnswerIndex": 2
+        }
+      ]
+    }
+  ]
+  

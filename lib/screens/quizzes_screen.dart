@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quiz_app/data/mock_data.dart';
 import 'package:quiz_app/models/quiz_model.dart';
 import 'package:quiz_app/screens/quiz_detail_screen.dart';
+import 'package:quiz_app/services/quiz_service.dart';
 import '../theme/app_colors.dart';
 
-/// The screen that displays a list of available quizzes in various subjects.
+/// The screen that displays a list of all available quizzes in various subjects.
 /// This file has been corrected to prevent crashes and match the design specification.
 class QuizzesScreen extends StatelessWidget {
   const QuizzesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // FIX: The list of quizzes is now correctly fetched from the QuizService,
+    // which loads the data from the questions.json file.
+    final List<Quiz> quizzes = QuizService.quizzes;
+
     return Scaffold(
+      // FIX: Changed background to the solid yellow color from the design spec.
       backgroundColor: AppColors.quizListBackground,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.brandDarkBlue),
-          // A pop will safely return to the previous screen (HomeScreen).
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -49,20 +53,20 @@ class QuizzesScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(20.0),
               decoration: const BoxDecoration(
+                // FIX: Using the light cream color for the card as per the spec.
                 color: AppColors.quizDetailCard,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(40),
                   topRight: Radius.circular(40),
                 ),
               ),
-              // FIX: The ListView now correctly uses the length of the actual
-              // MockData.quizzes list, which prevents the RangeError.
+              // FIX: The ListView now correctly uses the length of the list
+              // from QuizService, which prevents any RangeError.
               child: ListView.separated(
-                itemCount: MockData.quizzes.length,
+                itemCount: quizzes.length,
                 itemBuilder: (context, index) {
-                  final quiz = MockData.quizzes[index];
-                  // This logic safely adds a "Due" tag for demonstration
-                  // without causing a crash.
+                  final quiz = quizzes[index];
+                  // This logic safely adds a "Due" tag for demonstration.
                   final String? dueDate = (index == 2) ? 'Due 18' : null;
                   return _QuizListItem(
                     quiz: quiz,
@@ -98,6 +102,7 @@ class _QuizListItem extends StatelessWidget {
           MaterialPageRoute(builder: (context) => QuizDetailScreen(quiz: quiz)),
         );
       },
+      // FIX: The list item is now a simple Row, not a gradient card.
       child: Row(
         children: [
           Expanded(

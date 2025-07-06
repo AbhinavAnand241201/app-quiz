@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../models/quiz_model.dart'; // Assuming LeaderboardUser is here
 import '../theme/app_colors.dart';
+import '../screens/main_screen.dart'; // Import MainScreen to navigate back
 
 /// Displays the results of a completed quiz.
-/// This screen has been updated to precisely match the design specification.
+/// This file has been updated with improved alignment and layout.
 class QuizResultsScreen extends StatelessWidget {
   final int score;
   final int totalQuestions;
@@ -19,24 +19,34 @@ class QuizResultsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Mock data for the student list, as it's part of this screen's design.
     final List<Map<String, String>> students = [
-      {'name': 'Emma', 'status': 'Perfect', 'score': '10/10'},
-      {'name': 'Good', 'status': 'Good', 'score': '7/10'},
+      {
+        'name': 'Emma',
+        'status': 'Perfect',
+        'score': '10/10',
+        'avatarUrl': 'https://i.pravatar.cc/150?u=emma'
+      },
+      {
+        'name': 'Leo',
+        'status': 'Good',
+        'score': '7/10',
+        'avatarUrl': 'https://i.pravatar.cc/150?u=leo'
+      },
     ];
 
     return Scaffold(
-      // FIX: Changed background to the solid teal color from the design spec.
       backgroundColor: AppColors.quizResultsBackground,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close, color: Colors.white),
+          onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+              (route) => false),
         ),
         actions: [
-          // Placeholder for the clipboard smiley icon.
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child:
-                const Icon(Icons.assignment_turned_in_outlined, color: Colors.white, size: 28),
+            child: const Icon(Icons.assignment_turned_in_outlined,
+                color: Colors.white, size: 28),
           ),
         ],
         backgroundColor: Colors.transparent,
@@ -47,7 +57,6 @@ class QuizResultsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header text.
             Text(
               'Quiz Results',
               style: GoogleFonts.poppins(
@@ -57,11 +66,18 @@ class QuizResultsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Main score card.
-            _MainScoreCard(score: score, totalQuestions: totalQuestions),
-            const SizedBox(height: 20),
-            // Students list card.
-            _StudentsListCard(students: students),
+            // The main content is now wrapped in an Expanded widget
+            // to allow for better spacing and alignment.
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _MainScoreCard(score: score, totalQuestions: totalQuestions),
+                  const SizedBox(height: 30),
+                  _StudentsListCard(students: students),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -81,13 +97,11 @@ class _MainScoreCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
       decoration: BoxDecoration(
-        // FIX: Using the light cream color from the spec.
         color: AppColors.quizResultsCard,
         borderRadius: BorderRadius.circular(40),
       ),
       child: Column(
         children: [
-          // Placeholder for the yellow smiley icon.
           const Icon(Icons.sentiment_satisfied,
               color: AppColors.buttonGold, size: 80),
           const SizedBox(height: 16),
@@ -116,7 +130,6 @@ class _StudentsListCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        // FIX: Using a slightly lighter teal for the card background.
         color: AppColors.quizResultsBackground.withBlue(190).withGreen(182),
         borderRadius: BorderRadius.circular(25),
       ),
@@ -132,7 +145,6 @@ class _StudentsListCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          // Using ListView.separated to easily add dividers.
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -143,6 +155,7 @@ class _StudentsListCard extends StatelessWidget {
                 name: student['name']!,
                 status: student['status']!,
                 score: student['score']!,
+                avatarUrl: student['avatarUrl']!,
               );
             },
             separatorBuilder: (context, index) => Divider(
@@ -158,20 +171,20 @@ class _StudentsListCard extends StatelessWidget {
 
 /// A single list item representing a student's result.
 class _StudentListItem extends StatelessWidget {
-  final String name;
-  final String status;
-  final String score;
+  final String name, status, score, avatarUrl;
 
   const _StudentListItem(
-      {required this.name, required this.status, required this.score});
+      {required this.name,
+      required this.status,
+      required this.score,
+      required this.avatarUrl});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Placeholder for the student avatar.
-        const CircleAvatar(
-          backgroundColor: AppColors.podiumPink,
+        CircleAvatar(
+          backgroundImage: NetworkImage(avatarUrl),
           radius: 22,
         ),
         const SizedBox(width: 12),
