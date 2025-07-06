@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/screens/home_screen.dart';
 import 'package:quiz_app/screens/leaderboard_screen.dart';
+import 'package:quiz_app/screens/profile_screen.dart'; // Import the new profile screen
 import 'package:quiz_app/screens/quizzes_screen.dart';
 import '../theme/app_colors.dart';
 
@@ -18,10 +19,12 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   // The list of screens accessible from the bottom navigation bar.
+  // STEP 5 FIX: Added the ProfileScreen to the list.
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     QuizzesScreen(),
     LeaderboardScreen(),
+    ProfileScreen(), // New screen added here
   ];
 
   void _onItemTapped(int index) {
@@ -36,27 +39,23 @@ class _MainScreenState extends State<MainScreen> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      // FIX: The BottomNavigationBar has been completely restyled to match the
-      // light theme of the HomeScreen as specified in the design document.
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          // FIX: Updated icons to match the design spec.
           _buildNavItem(Icons.home_filled, 'Home'),
           _buildNavItem(Icons.article_rounded, 'Browse'),
           _buildNavItem(Icons.emoji_events_rounded, 'Leaderboard'),
+          // STEP 5 FIX: Added the new navigation item for the Profile screen.
+          _buildNavItem(Icons.person_rounded, 'Profile'),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        // FIX: Changed background color to match the HomeScreen's light background.
         backgroundColor: AppColors.screenBackground,
         type: BottomNavigationBarType.fixed,
-        // FIX: Enabled labels as shown in the design screenshot.
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        // FIX: Set selected and unselected colors to match the design spec.
         selectedItemColor: AppColors.brandDarkBlue,
         unselectedItemColor: AppColors.textSlightlyDim,
-        elevation: 0, // No shadow as per the design.
+        elevation: 0,
         selectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         unselectedLabelStyle: GoogleFonts.poppins(),
       ),

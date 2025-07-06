@@ -56,7 +56,8 @@ class _ProfileHeader extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 35,
-          backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'),
+          backgroundImage:
+              NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'),
         ),
         SizedBox(width: 16),
         Column(
@@ -68,7 +69,8 @@ class _ProfileHeader extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: AppColors.brandDarkBlue)),
             Text('Grade 3',
-                style: TextStyle(fontSize: 16, color: AppColors.textSlightlyDim)),
+                style:
+                    TextStyle(fontSize: 16, color: AppColors.textSlightlyDim)),
           ],
         )
       ],
@@ -149,13 +151,17 @@ class _WeeklyPerformanceChart extends StatelessWidget {
             _makeBarGroup(6, 6.5),
           ],
           titlesData: FlTitlesData(
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                getTitlesWidget: (value, meta) =>
-                    SideTitleWidget(axisSide: meta.axisSide, child: Text(['M', 'T', 'W', 'T', 'F', 'S', 'S'][value.toInt()])),
+                getTitlesWidget: (value, meta) => SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(
+                        ['M', 'T', 'W', 'T', 'F', 'S', 'S'][value.toInt()])),
               ),
             ),
           ),
@@ -186,13 +192,25 @@ class _SubjectMasteryChart extends StatelessWidget {
         PieChartData(
           sections: [
             PieChartSectionData(
-                color: AppColors.radiantOrange, value: 40, title: '40%', radius: 50),
+                color: AppColors.radiantOrange,
+                value: 40,
+                title: '40%',
+                radius: 50),
             PieChartSectionData(
-                color: AppColors.radiantCyan, value: 30, title: '30%', radius: 50),
+                color: AppColors.radiantCyan,
+                value: 30,
+                title: '30%',
+                radius: 50),
             PieChartSectionData(
-                color: AppColors.radiantPink, value: 15, title: '15%', radius: 50),
+                color: AppColors.radiantPink,
+                value: 15,
+                title: '15%',
+                radius: 50),
             PieChartSectionData(
-                color: AppColors.buttonGold, value: 15, title: '15%', radius: 50),
+                color: AppColors.buttonGold,
+                value: 15,
+                title: '15%',
+                radius: 50),
           ],
           borderData: FlBorderData(show: false),
           sectionsSpace: 0,
