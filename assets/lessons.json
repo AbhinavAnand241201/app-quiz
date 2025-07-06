@@ -1,3 +1,5 @@
+
+
 {
     "Mathematics": [
       {
@@ -26,6 +28,54 @@
         "title": "What is a Mammal?",
         "content": "Mammals are animals that have fur or hair and drink milk when they are babies. Lions, dogs, and even you are mammals!",
         "emoji": "🐶"
+      }
+    ],
+    "Art": [
+      {
+        "title": "Primary Colors",
+        "content": "The three primary colors are Red, Yellow, and Blue. They are special because you can mix them to create all other colors!",
+        "emoji": "🎨"
+      },
+      {
+        "title": "Mixing Colors",
+        "content": "If you mix Red and Yellow, you get Orange. If you mix Yellow and Blue, you get Green. What happens when you mix Red and Blue? You get Purple!",
+        "emoji": "🖌️"
+      }
+    ],
+    "History": [
+      {
+        "title": "Dinosaurs!",
+        "content": "Long, long ago, before people existed, giant reptiles called dinosaurs roamed the Earth. The T-Rex was a mighty hunter!",
+        "emoji": "🦖"
+      },
+      {
+        "title": "Ancient Egypt",
+        "content": "The Ancient Egyptians built huge pyramids as tombs for their kings, called Pharaohs. They also wrote using cool pictures called hieroglyphs.",
+        "emoji": "🏺"
+      }
+    ],
+    "Music": [
+      {
+        "title": "What is Rhythm?",
+        "content": "Rhythm is the beat of the music! It's what makes you want to tap your feet or clap your hands. Every song has a rhythm.",
+        "emoji": "🥁"
+      },
+      {
+        "title": "Instrument Families",
+        "content": "Instruments can be in families! String instruments like guitars, wind instruments like flutes, and percussion instruments like drums all make music in different ways.",
+        "emoji": "🎸"
+      }
+    ],
+    "Geography": [
+      {
+        "title": "Our Planet Earth",
+        "content": "We live on a beautiful planet called Earth. It's mostly covered in water, which is why it's called the 'Blue Planet'.",
+        "emoji": "🌍"
+      },
+      {
+        "title": "Continents and Oceans",
+        "content": "The big land areas on Earth are called continents, and the huge bodies of water are called oceans. There are 7 continents and 5 oceans to explore!",
+        "emoji": "🌊"
       }
     ]
   }
