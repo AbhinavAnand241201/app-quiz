@@ -4,8 +4,6 @@ import 'package:quiz_app/screens/quiz_results_screen.dart';
 import '../models/quiz_model.dart';
 import '../theme/app_colors.dart';
 
-/// The screen where the user actively answers quiz questions.
-/// This file has been updated with animations and improved styling for a more engaging experience.
 class QuizQuestionScreen extends StatefulWidget {
   final Quiz quiz;
   const QuizQuestionScreen({Key? key, required this.quiz}) : super(key: key);
@@ -16,20 +14,22 @@ class QuizQuestionScreen extends StatefulWidget {
 
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   int _currentQuestionIndex = 0;
-  int _score = 0;
   int? _selectedAnswerIndex;
+  // ADDED: A list to store the user's answers.
+  final List<UserAnswer> _userAnswers = [];
 
   void _answerQuestion(int selectedIndex) {
     setState(() {
       _selectedAnswerIndex = selectedIndex;
-      if (selectedIndex ==
-          widget.quiz.questions[_currentQuestionIndex].correctAnswerIndex) {
-        _score++;
-      }
+      // Record the user's answer.
+      _userAnswers.add(UserAnswer(
+        question: widget.quiz.questions[_currentQuestionIndex],
+        selectedAnswerIndex: selectedIndex,
+      ));
     });
 
     Future.delayed(const Duration(milliseconds: 1200), () {
-      if (!mounted) return; // Ensure the widget is still in the tree
+      if (!mounted) return;
       if (_currentQuestionIndex < widget.quiz.questions.length - 1) {
         setState(() {
           _currentQuestionIndex++;
@@ -40,8 +40,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => QuizResultsScreen(
-              score: _score,
-              totalQuestions: widget.quiz.questions.length,
+              userAnswers: _userAnswers, // Pass the full answer list
             ),
           ),
         );
@@ -51,6 +50,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ... UI remains the same as the previous corrected version ...
     final Question currentQuestion =
         widget.quiz.questions[_currentQuestionIndex];
     final double progress =
@@ -71,7 +71,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        // IMPROVEMENT: The progress bar is thicker and more visually prominent.
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(8.0),
           child: Padding(
@@ -128,7 +127,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   }
 }
 
-/// The Option widget, now with animations and enhanced styling.
 class _Option extends StatelessWidget {
   final String optionText;
   final bool isSelected;
@@ -164,7 +162,6 @@ class _Option extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // FIX: Added an animation to make the button "pop" when selected.
     return AnimatedScale(
       scale: isSelected ? 1.05 : 1.0,
       duration: const Duration(milliseconds: 150),
@@ -176,7 +173,6 @@ class _Option extends StatelessWidget {
           decoration: BoxDecoration(
             color: _getBackgroundColor(),
             borderRadius: BorderRadius.circular(25),
-            // IMPROVEMENT: Added a subtle shadow to give the buttons depth.
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
@@ -195,7 +191,6 @@ class _Option extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    // FIX: Text color is now always dark for better readability.
                     color: AppColors.brandDarkBlue,
                   ),
                 ),

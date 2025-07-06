@@ -9,17 +9,20 @@
         {
           "questionText": "What is 2 + 2?",
           "options": ["3", "4", "5", "6"],
-          "correctAnswerIndex": 1
+          "correctAnswerIndex": 1,
+          "explanation": "When you have a group of 2 and add another group of 2, you get a total of 4!"
         },
         {
           "questionText": "What is 10 + 5?",
           "options": ["14", "15", "16", "17"],
-          "correctAnswerIndex": 1
+          "correctAnswerIndex": 1,
+          "explanation": "Starting from 10 and counting up 5 more numbers (11, 12, 13, 14, 15) gets you to 15."
         },
         {
           "questionText": "What is 7 + 8?",
           "options": ["15", "14", "13", "12"],
-          "correctAnswerIndex": 0
+          "correctAnswerIndex": 0,
+          "explanation": "7 plus 8 equals 15. A fun trick is 7+7=14, and since 8 is one more than 7, the answer is one more than 14."
         }
       ]
     },
@@ -33,12 +36,14 @@
         {
           "questionText": "What is the fastest land animal?",
           "options": ["Lion", "Tiger", "Cheetah"],
-          "correctAnswerIndex": 2
+          "correctAnswerIndex": 2,
+          "explanation": "The Cheetah is known for its incredible speed, making it the fastest animal on land."
         },
         {
           "questionText": "Which animal is known as the 'King of the Jungle'?",
           "options": ["Elephant", "Lion", "Bear"],
-          "correctAnswerIndex": 1
+          "correctAnswerIndex": 1,
+          "explanation": "The Lion is famously called the 'King of the Jungle' because of its strength and majestic appearance."
         }
       ]
     },
@@ -52,7 +57,8 @@
         {
           "questionText": "What color do you get when you mix red and blue?",
           "options": ["Green", "Orange", "Purple"],
-          "correctAnswerIndex": 2
+          "correctAnswerIndex": 2,
+          "explanation": "Mixing the primary colors red and blue creates the secondary color purple."
         }
       ]
     },
@@ -66,7 +72,8 @@
         {
           "questionText": "Who was the first emperor of Rome?",
           "options": ["Julius Caesar", "Augustus", "Nero"],
-          "correctAnswerIndex": 1
+          "correctAnswerIndex": 1,
+          "explanation": "While Julius Caesar was a powerful leader, his great-nephew Augustus was officially the first Roman Emperor."
         }
       ]
     },
@@ -80,7 +87,8 @@
         {
           "questionText": "Which of these is a string instrument?",
           "options": ["Flute", "Violin", "Drum"],
-          "correctAnswerIndex": 1
+          "correctAnswerIndex": 1,
+          "explanation": "A violin creates music using strings, while a flute uses wind and a drum is a percussion instrument."
         }
       ]
     },
@@ -94,12 +102,14 @@
         {
           "questionText": "What is the capital of France?",
           "options": ["London", "Berlin", "Paris"],
-          "correctAnswerIndex": 2
+          "correctAnswerIndex": 2,
+          "explanation": "Paris is the famous capital city of France, known for the Eiffel Tower."
         },
         {
           "questionText": "What is the capital of Japan?",
           "options": ["Beijing", "Seoul", "Tokyo"],
-          "correctAnswerIndex": 2
+          "correctAnswerIndex": 2,
+          "explanation": "Tokyo is the bustling and vibrant capital city of Japan."
         }
       ]
     }

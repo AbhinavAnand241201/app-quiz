@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quiz_app/models/quiz_model.dart';
+import 'package:quiz_app/screens/test_analysis_screen.dart';
 import '../theme/app_colors.dart';
 import '../screens/main_screen.dart';
 
-/// Displays the results of a completed quiz with dynamic feedback.
+/// Displays the results of a completed quiz with dynamic feedback and analysis.
 class QuizResultsScreen extends StatefulWidget {
-  final int score;
-  final int totalQuestions;
+  // Now accepts a list of UserAnswer objects instead of just the score.
+  final List<UserAnswer> userAnswers;
 
   const QuizResultsScreen({
     Key? key,
-    required this.score,
-    required this.totalQuestions,
+    required this.userAnswers,
   }) : super(key: key);
 
   @override
@@ -28,10 +29,10 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 600),
     );
     _animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.bounceOut);
+        CurvedAnimation(parent: _animationController, curve: Curves.elasticOut);
     _animationController.forward();
   }
 
@@ -43,12 +44,18 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final double percentage =
-        widget.totalQuestions > 0 ? widget.score / widget.totalQuestions : 0;
+    // Calculate score and incorrect answers from the passed list.
+    final int totalQuestions = widget.userAnswers.length;
+    final int score =
+        widget.userAnswers.where((answer) => answer.isCorrect).length;
+    final incorrectAnswers =
+        widget.userAnswers.where((answer) => !answer.isCorrect).toList();
+
+    final double percentage = totalQuestions > 0 ? score / totalQuestions : 0;
     String message;
     String emoji;
 
-    // STEP 1 FIX: Use different emojis based on performance.
+    // STEP 1: Dynamic emoji based on performance.
     if (percentage >= 0.9) {
       message = 'Excellent!';
       emoji = '🥳';
@@ -75,19 +82,39 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ScaleTransition(
-              scale: _animation,
-              child: _MainScoreCard(
-                  score: widget.score,
-                  totalQuestions: widget.totalQuestions,
-                  emoji: emoji),
-            ),
-          ],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Spacer(),
+              ScaleTransition(
+                scale: _animation,
+                child: _MainScoreCard(
+                    score: score,
+                    totalQuestions: totalQuestions,
+                    emoji: emoji,
+                    message: message),
+              ),
+              const SizedBox(height: 30),
+              // The "Test Analysis" button, which only appears if there were mistakes.
+              if (incorrectAnswers.isNotEmpty)
+                _AnalysisButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TestAnalysisScreen(
+                            incorrectAnswers: incorrectAnswers),
+                      ),
+                    );
+                  },
+                ),
+              const Spacer(),
+            ],
+          ),
         ),
       ),
     );
@@ -98,11 +125,13 @@ class _MainScoreCard extends StatelessWidget {
   final int score;
   final int totalQuestions;
   final String emoji;
+  final String message;
 
   const _MainScoreCard(
       {required this.score,
       required this.totalQuestions,
-      required this.emoji});
+      required this.emoji,
+      required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +144,12 @@ class _MainScoreCard extends StatelessWidget {
         children: [
           Text(emoji, style: const TextStyle(fontSize: 100)),
           const SizedBox(height: 16),
+          Text(message,
+              style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.brandDarkBlue)),
+          const SizedBox(height: 8),
           Text('$score/$totalQuestions',
               style: GoogleFonts.poppins(
                   fontSize: 56,
@@ -122,6 +157,27 @@ class _MainScoreCard extends StatelessWidget {
                   color: AppColors.brandDarkBlue)),
         ],
       ),
+    );
+  }
+}
+
+class _AnalysisButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const _AnalysisButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: AppColors.brandDarkBlue,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        padding: const EdgeInsets.symmetric(vertical: 15),
+      ),
+      icon: const Icon(Icons.analytics_outlined),
+      label: Text('Test Analysis',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
     );
   }
 }

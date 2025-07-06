@@ -25,3 +25,4 @@ flutter:
   # This is the crucial part to add
   assets:
     - assets/questions.json
+    - assets/lessons.json

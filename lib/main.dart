@@ -5,10 +5,9 @@ import 'package:quiz_app/services/quiz_service.dart';
 import 'theme/app_colors.dart';
 
 void main() async {
-  // Ensure that Flutter bindings are initialized.
   WidgetsFlutterBinding.ensureInitialized();
-  // Load the quiz data from JSON before running the app.
-  await QuizService.loadQuizzes();
+  // Load all data from JSON before running the app.
+  await QuizService.loadAllData();
   runApp(const MyApp());
 }
 
@@ -18,11 +17,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'hellorabbi Quiz App',
+      title: 'hellorabbit',
       theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
-        ),
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.challengeBlue,
           brightness: Brightness.light,

@@ -1,0 +1,32 @@
+{
+    "Mathematics": [
+      {
+        "title": "What is Addition?",
+        "content": "Addition is like putting groups of things together to see how many you have in total. When you add 2 apples and 3 apples, you get 5 apples!",
+        "emoji": "🍎"
+      },
+      {
+        "title": "The Plus Sign",
+        "content": "We use a special sign for addition, it looks like this: +. It's called the plus sign! So, 2 + 3 = 5.",
+        "emoji": "➕"
+      },
+      {
+        "title": "Let's Practice!",
+        "content": "You're ready to test your skills. Remember to count carefully. You've got this!",
+        "emoji": "🚀"
+      }
+    ],
+    "Science": [
+      {
+        "title": "The Animal Kingdom",
+        "content": "The world is full of amazing animals! Some live on land, some in the sea, and some can fly in the sky.",
+        "emoji": "🦁"
+      },
+      {
+        "title": "What is a Mammal?",
+        "content": "Mammals are animals that have fur or hair and drink milk when they are babies. Lions, dogs, and even you are mammals!",
+        "emoji": "🐶"
+      }
+    ]
+  }
+  

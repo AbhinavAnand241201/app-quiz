@@ -1,21 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quiz_app/data/mock_data.dart';
+import 'package:quiz_app/models/quiz_model.dart';
 import 'package:quiz_app/screens/challenge_screen.dart';
-import 'package:quiz_app/screens/quizzes_screen.dart';
+import 'package:quiz_app/screens/lesson_screen.dart';
 import 'package:quiz_app/services/quiz_service.dart';
 import '../theme/app_colors.dart';
-
-// Placeholder screen for navigation
-class SubjectDetailScreen extends StatelessWidget {
-  final String subjectName;
-  const SubjectDetailScreen({super.key, required this.subjectName});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: Text(subjectName)),
-      body: Center(child: Text("$subjectName Quizzes")));
-}
 
 /// The main home screen, completely redesigned for a more fun and engaging UI.
 class HomeScreen extends StatelessWidget {
@@ -23,14 +13,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // FIX: Define the subjects list here in the parent widget.
-    final subjects = MockData.subjects;
+    final subjects = QuizService.quizzes;
 
     return Scaffold(
       backgroundColor: AppColors.screenBackground,
       body: Stack(
         children: [
-          // Decorative background doodles
           Positioned(
               top: 100,
               left: -20,
@@ -53,15 +41,15 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 const _AppBar(),
                 const SizedBox(height: 24),
-                const _Header(),
+                // FIX: "Hello" removed as requested.
+                const _SectionHeader(title: 'Trending Quizzes 🔥'),
                 const SizedBox(height: 8),
-                const _TrendingQuizzes(),
+                _TrendingQuizzes(quizzes: subjects.take(3).toList()),
                 const SizedBox(height: 24),
                 const _TodaysChallenge(),
                 const SizedBox(height: 24),
-                const _SectionHeader(title: 'Explore Subjects 📚'),
+                _SectionHeader(title: 'Explore Subjects 📚'),
                 const SizedBox(height: 16),
-                // FIX: Pass the subjects list to the child widget.
                 _ExploreSubjectsGrid(subjects: subjects),
                 const SizedBox(height: 20),
               ],
@@ -103,7 +91,8 @@ class _AppBar extends StatelessWidget {
           children: [
             const Text('🐰', style: TextStyle(fontSize: 30)),
             const SizedBox(width: 8),
-            Text('hellorabbi',
+            // FIX: "hellorabbi" changed to "hellorabbit"
+            Text('hellorabbit',
                 style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -122,39 +111,38 @@ class _AppBar extends StatelessWidget {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header();
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader({required this.title});
+
   @override
   Widget build(BuildContext context) {
-    return Text('Hello\nTrending Quizzes',
-        style: GoogleFonts.poppins(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: AppColors.brandDarkBlue,
-            height: 1.2));
+    return Text(
+      title,
+      style: GoogleFonts.poppins(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: AppColors.brandDarkBlue,
+      ),
+    );
   }
 }
 
 class _TrendingQuizzes extends StatelessWidget {
-  const _TrendingQuizzes();
+  final List<Quiz> quizzes;
+  const _TrendingQuizzes({required this.quizzes});
 
   @override
   Widget build(BuildContext context) {
-    final trending = QuizService.quizzes.take(3).toList();
     return SizedBox(
       height: 180,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
-        itemCount: trending.length,
+        itemCount: quizzes.length,
         itemBuilder: (context, index) {
-          final quiz = trending[index];
-          return _TrendingQuizCard(
-            title: quiz.topic,
-            details: '${quiz.subject} • Grade ${index + 1}',
-            character: '🚀',
-            color: quiz.color,
-          );
+          final quiz = quizzes[index];
+          return _TrendingQuizCard(quiz: quiz);
         },
       ),
     );
@@ -162,50 +150,48 @@ class _TrendingQuizzes extends StatelessWidget {
 }
 
 class _TrendingQuizCard extends StatelessWidget {
-  final String title, details, character;
-  final Color color;
-
-  const _TrendingQuizCard(
-      {required this.title,
-      required this.details,
-      required this.character,
-      required this.color});
+  final Quiz quiz;
+  const _TrendingQuizCard({required this.quiz});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const QuizzesScreen()));
+        final lessons = QuizService.lessons[quiz.subject] ?? [];
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    LessonScreen(quiz: quiz, lessons: lessons)));
       },
       child: Container(
         width: 140,
         margin: const EdgeInsets.only(right: 16.0, top: 10, bottom: 10),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: color,
+            color: quiz.color,
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                  color: color.withOpacity(0.4),
+                  color: quiz.color.withOpacity(0.4),
                   blurRadius: 10,
                   offset: const Offset(0, 4))
             ]),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
+            Text(quiz.topic,
                 style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white)),
-            Text(details,
+            Text(quiz.subject,
                 style: GoogleFonts.poppins(
                     fontSize: 12, color: Colors.white.withOpacity(0.9))),
             const Spacer(),
             Align(
                 alignment: Alignment.bottomRight,
-                child: Text(character, style: const TextStyle(fontSize: 40))),
+                child: Icon(quiz.icon, color: Colors.white, size: 40)),
           ],
         ),
       ),
@@ -254,27 +240,8 @@ class _TodaysChallenge extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: GoogleFonts.poppins(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: AppColors.brandDarkBlue,
-      ),
-    );
-  }
-}
-
-/// The "Explore Subjects" grid widget.
 class _ExploreSubjectsGrid extends StatelessWidget {
-  // FIX: Accept the list of subjects as a parameter.
-  final List<Map<String, dynamic>> subjects;
+  final List<Quiz> subjects;
   const _ExploreSubjectsGrid({required this.subjects});
 
   @override
@@ -288,48 +255,42 @@ class _ExploreSubjectsGrid extends StatelessWidget {
         mainAxisSpacing: 16,
         childAspectRatio: 1,
       ),
-      // FIX: Use the passed-in list's length.
       itemCount: subjects.length,
       itemBuilder: (context, index) {
-        // FIX: Use the passed-in list to get the subject.
-        final subject = subjects[index];
-        return _SubjectCard(
-            name: subject['name'],
-            icon: subject['icon'],
-            color: subject['color']);
+        final subjectQuiz = subjects[index];
+        return _SubjectCard(quiz: subjectQuiz);
       },
     );
   }
 }
 
 class _SubjectCard extends StatelessWidget {
-  final String name, icon;
-  final Color color;
-
-  const _SubjectCard(
-      {required this.name, required this.icon, required this.color});
+  final Quiz quiz;
+  const _SubjectCard({required this.quiz});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        final lessons = QuizService.lessons[quiz.subject] ?? [];
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => SubjectDetailScreen(subjectName: name)));
+                builder: (context) =>
+                    LessonScreen(quiz: quiz, lessons: lessons)));
       },
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color,
+          color: quiz.color,
           borderRadius: BorderRadius.circular(25),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(icon, style: const TextStyle(fontSize: 28)),
+            Icon(quiz.icon, color: Colors.white, size: 28),
             const SizedBox(height: 8),
-            Text(name,
+            Text(quiz.subject,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
                     fontSize: 14,
