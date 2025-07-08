@@ -4,6 +4,8 @@ import 'package:quiz_app/screens/quiz_results_screen.dart';
 import '../models/quiz_model.dart';
 import '../theme/app_colors.dart';
 
+/// The screen where the user actively answers quiz questions.
+/// This file has been corrected to pass all necessary data to the results screen.
 class QuizQuestionScreen extends StatefulWidget {
   final Quiz quiz;
   const QuizQuestionScreen({Key? key, required this.quiz}) : super(key: key);
@@ -15,13 +17,11 @@ class QuizQuestionScreen extends StatefulWidget {
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   int _currentQuestionIndex = 0;
   int? _selectedAnswerIndex;
-  // ADDED: A list to store the user's answers.
   final List<UserAnswer> _userAnswers = [];
 
   void _answerQuestion(int selectedIndex) {
     setState(() {
       _selectedAnswerIndex = selectedIndex;
-      // Record the user's answer.
       _userAnswers.add(UserAnswer(
         question: widget.quiz.questions[_currentQuestionIndex],
         selectedAnswerIndex: selectedIndex,
@@ -36,11 +36,15 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
           _selectedAnswerIndex = null;
         });
       } else {
+        // When the quiz is over, navigate to the results screen.
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => QuizResultsScreen(
-              userAnswers: _userAnswers, // Pass the full answer list
+              userAnswers: _userAnswers,
+              // FIX: Passing the subject to the results screen is crucial for history.
+              // This was the missing piece of logic.
+              subject: widget.quiz.subject,
             ),
           ),
         );
@@ -50,7 +54,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ... UI remains the same as the previous corrected version ...
     final Question currentQuestion =
         widget.quiz.questions[_currentQuestionIndex];
     final double progress =

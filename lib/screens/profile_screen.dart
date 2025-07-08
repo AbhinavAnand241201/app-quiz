@@ -1,11 +1,92 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:quiz_app/models/quiz_model.dart';
+import 'package:quiz_app/services/local_storage_service.dart';
 import 'package:quiz_app/theme/app_colors.dart';
 
-/// A new screen to display user profile information and performance analytics.
-class ProfileScreen extends StatelessWidget {
+/// The screen for displaying user profile information and performance analytics.
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  List<AttemptedQuiz> _history = [];
+  Map<String, double> _subjectAverages = {};
+  List<String> _subjectOrder = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    final history = await LocalStorageService.getAttemptedQuizzes();
+    if (mounted) {
+      setState(() {
+        _history = history;
+        _calculateSubjectAverages();
+      });
+    }
+  }
+
+  String _calculateOverallAverageScore() {
+    if (_history.isEmpty) return '0%';
+    double totalScore = 0;
+    double totalPossibleScore = 0;
+    for (var attempt in _history) {
+      totalScore += attempt.score;
+      totalPossibleScore += attempt.totalQuestions;
+    }
+    if (totalPossibleScore == 0) return '0%';
+    final average = (totalScore / totalPossibleScore) * 100;
+    return '${average.toStringAsFixed(0)}%';
+  }
+
+  void _calculateSubjectAverages() {
+    Map<String, List<int>> subjectScores = {};
+    Map<String, List<int>> subjectTotals = {};
+
+    for (var attempt in _history) {
+      subjectScores.putIfAbsent(attempt.subject, () => []).add(attempt.score);
+      subjectTotals
+          .putIfAbsent(attempt.subject, () => [])
+          .add(attempt.totalQuestions);
+    }
+
+    Map<String, double> averages = {};
+    subjectScores.forEach((subject, scores) {
+      double totalScore = scores.reduce((a, b) => a + b).toDouble();
+      double totalPossible =
+          subjectTotals[subject]!.reduce((a, b) => a + b).toDouble();
+      averages[subject] = (totalScore / totalPossible) * 100;
+    });
+
+    setState(() {
+      _subjectAverages = averages;
+      _subjectOrder = averages.keys.toList();
+    });
+  }
+
+  List<BarChartGroupData> _generateChartData() {
+    return _subjectOrder.asMap().entries.map((entry) {
+      int index = entry.key;
+      String subject = entry.value;
+      double average = _subjectAverages[subject] ?? 0;
+      return BarChartGroupData(x: index, barRods: [
+        BarChartRodData(
+            toY: average,
+            color: AppColors.challengeBlue,
+            width: 22,
+            borderRadius: BorderRadius.circular(6))
+      ]);
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +107,24 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 30),
           _StatCard(
               title: 'Quizzes Completed',
-              value: '12',
+              value: _history.length.toString(),
               icon: Icons.check_circle,
               color: AppColors.radiantLime),
           const SizedBox(height: 16),
           _StatCard(
               title: 'Average Score',
-              value: '82%',
+              value: _calculateOverallAverageScore(),
               icon: Icons.star,
               color: AppColors.buttonGold),
           const SizedBox(height: 30),
-          _SectionTitle(title: 'Weekly Performance'),
+          _SectionTitle(title: 'Performance by Subject'),
           const SizedBox(height: 16),
-          _WeeklyPerformanceChart(),
+          _PerformanceChart(
+              chartData: _generateChartData(), subjects: _subjectOrder),
           const SizedBox(height: 30),
-          _SectionTitle(title: 'Subject Mastery'),
+          _SectionTitle(title: 'Quiz History'),
           const SizedBox(height: 16),
-          _SubjectMasteryChart(),
+          _QuizHistoryList(history: _history),
         ],
       ),
     );
@@ -133,23 +215,23 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _WeeklyPerformanceChart extends StatelessWidget {
+class _PerformanceChart extends StatelessWidget {
+  final List<BarChartGroupData> chartData;
+  final List<String> subjects;
+  const _PerformanceChart({required this.chartData, required this.subjects});
+
   @override
   Widget build(BuildContext context) {
+    if (chartData.isEmpty) {
+      return const Center(
+          child: Text("Complete some quizzes to see your performance!"));
+    }
     return AspectRatio(
       aspectRatio: 1.7,
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          barGroups: [
-            _makeBarGroup(0, 5),
-            _makeBarGroup(1, 6.5),
-            _makeBarGroup(2, 5),
-            _makeBarGroup(3, 7.5),
-            _makeBarGroup(4, 9),
-            _makeBarGroup(5, 11.5),
-            _makeBarGroup(6, 6.5),
-          ],
+          barGroups: chartData,
           titlesData: FlTitlesData(
             topTitles:
                 const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -158,10 +240,13 @@ class _WeeklyPerformanceChart extends StatelessWidget {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                getTitlesWidget: (value, meta) => SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                        ['M', 'T', 'W', 'T', 'F', 'S', 'S'][value.toInt()])),
+                getTitlesWidget: (value, meta) {
+                  if (value.toInt() >= subjects.length) return const SizedBox();
+                  final subject = subjects[value.toInt()];
+                  return SideTitleWidget(
+                      axisSide: meta.axisSide,
+                      child: Text(subject.substring(0, 3)));
+                },
               ),
             ),
           ),
@@ -171,52 +256,63 @@ class _WeeklyPerformanceChart extends StatelessWidget {
       ),
     );
   }
-
-  BarChartGroupData _makeBarGroup(int x, double y) {
-    return BarChartGroupData(x: x, barRods: [
-      BarChartRodData(
-          toY: y,
-          color: AppColors.challengeBlue,
-          width: 22,
-          borderRadius: BorderRadius.circular(6))
-    ]);
-  }
 }
 
-class _SubjectMasteryChart extends StatelessWidget {
+class _QuizHistoryList extends StatelessWidget {
+  final List<AttemptedQuiz> history;
+  const _QuizHistoryList({required this.history});
+
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.3,
-      child: PieChart(
-        PieChartData(
-          sections: [
-            PieChartSectionData(
-                color: AppColors.radiantOrange,
-                value: 40,
-                title: '40%',
-                radius: 50),
-            PieChartSectionData(
-                color: AppColors.radiantCyan,
-                value: 30,
-                title: '30%',
-                radius: 50),
-            PieChartSectionData(
-                color: AppColors.radiantPink,
-                value: 15,
-                title: '15%',
-                radius: 50),
-            PieChartSectionData(
-                color: AppColors.buttonGold,
-                value: 15,
-                title: '15%',
-                radius: 50),
-          ],
-          borderData: FlBorderData(show: false),
-          sectionsSpace: 0,
-          centerSpaceRadius: 40,
-        ),
-      ),
+    if (history.isEmpty) {
+      return const Center(
+          child: Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Text('No quizzes attempted yet! Complete a quiz to see your history.'),
+      ));
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: history.length,
+      itemBuilder: (context, index) {
+        final attempt = history[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.history, color: AppColors.challengeBlue),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(attempt.subject,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: AppColors.brandDarkBlue)),
+                    Text(DateFormat.yMMMd().format(attempt.date),
+                        style: const TextStyle(
+                            color: AppColors.textSlightlyDim, fontSize: 12)),
+                  ],
+                ),
+              ),
+              Text('${attempt.score}/${attempt.totalQuestions}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.brandDarkBlue)),
+            ],
+          ),
+        );
+      },
     );
   }
 }

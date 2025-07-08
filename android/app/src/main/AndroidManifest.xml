@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- THIS IS THE REQUIRED PERMISSION FOR INTERNET ACCESS -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:label="quiz_app"
         android:name="${applicationName}"

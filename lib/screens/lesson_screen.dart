@@ -20,6 +20,18 @@ class _LessonScreenState extends State<LessonScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Handle case where there are no lessons
+    if (widget.lessons.isEmpty) {
+      // Immediately navigate to the quiz if no lessons are available
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => QuizQuestionScreen(quiz: widget.quiz)));
+      });
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: widget.quiz.color,
       appBar: AppBar(

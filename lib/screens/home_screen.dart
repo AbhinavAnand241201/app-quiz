@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/models/quiz_model.dart';
 import 'package:quiz_app/screens/challenge_screen.dart';
 import 'package:quiz_app/screens/lesson_screen.dart';
+import 'package:quiz_app/screens/quiz_landing_screen.dart';
 import 'package:quiz_app/services/quiz_service.dart';
 import '../theme/app_colors.dart';
 
@@ -19,6 +20,7 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.screenBackground,
       body: Stack(
         children: [
+          // Decorative background doodles for a more playful UI.
           Positioned(
               top: 100,
               left: -20,
@@ -41,14 +43,13 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 const _AppBar(),
                 const SizedBox(height: 24),
-                // FIX: "Hello" removed as requested.
                 const _SectionHeader(title: 'Trending Quizzes 🔥'),
                 const SizedBox(height: 8),
                 _TrendingQuizzes(quizzes: subjects.take(3).toList()),
                 const SizedBox(height: 24),
                 const _TodaysChallenge(),
                 const SizedBox(height: 24),
-                _SectionHeader(title: 'Explore Subjects 📚'),
+                const _SectionHeader(title: 'Explore Subjects 📚'),
                 const SizedBox(height: 16),
                 _ExploreSubjectsGrid(subjects: subjects),
                 const SizedBox(height: 20),
@@ -91,7 +92,6 @@ class _AppBar extends StatelessWidget {
           children: [
             const Text('🐰', style: TextStyle(fontSize: 30)),
             const SizedBox(width: 8),
-            // FIX: "hellorabbi" changed to "hellorabbit"
             Text('hellorabbit',
                 style: GoogleFonts.poppins(
                     fontSize: 24,
@@ -157,6 +157,7 @@ class _TrendingQuizCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // All trending cards navigate to their respective lesson screen.
         final lessons = QuizService.lessons[quiz.subject] ?? [];
         Navigator.push(
             context,
@@ -272,12 +273,28 @@ class _SubjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        final lessons = QuizService.lessons[quiz.subject] ?? [];
-        Navigator.push(
+        // This is the crucial logic for navigating to the correct screen.
+        if (quiz.subject == 'Mathematics') {
+          // For Math, go to the dynamic Gemini quiz landing screen.
+          Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    LessonScreen(quiz: quiz, lessons: lessons)));
+              builder: (context) => QuizLandingScreen(
+                subject: 'Mathematics',
+                topics: const ['Addition', 'Subtraction', 'Multiplication'],
+                themeColor: quiz.color,
+              ),
+            ),
+          );
+        } else {
+          // For all other subjects, go to the pre-made lesson screen.
+          final lessons = QuizService.lessons[quiz.subject] ?? [];
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      LessonScreen(quiz: quiz, lessons: lessons)));
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(12),

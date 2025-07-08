@@ -1,18 +1,23 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/models/quiz_model.dart';
 import 'package:quiz_app/screens/test_analysis_screen.dart';
+import 'package:quiz_app/services/local_storage_service.dart';
+import 'package:share_plus/share_plus.dart';
 import '../theme/app_colors.dart';
 import '../screens/main_screen.dart';
 
 /// Displays the results of a completed quiz with dynamic feedback and analysis.
 class QuizResultsScreen extends StatefulWidget {
-  // Now accepts a list of UserAnswer objects instead of just the score.
   final List<UserAnswer> userAnswers;
+  // FIX: Added the 'subject' parameter to the constructor.
+  // This is required to save the quiz attempt to the user's history.
+  final String subject;
 
   const QuizResultsScreen({
     Key? key,
     required this.userAnswers,
+    required this.subject,
   }) : super(key: key);
 
   @override
@@ -27,6 +32,7 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
   @override
   void initState() {
     super.initState();
+    _saveAttempt(); // Save the attempt when the screen loads
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -34,6 +40,19 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
     _animation =
         CurvedAnimation(parent: _animationController, curve: Curves.elasticOut);
     _animationController.forward();
+  }
+
+  /// Saves the quiz attempt using the passed-in subject.
+  Future<void> _saveAttempt() async {
+    final int score =
+        widget.userAnswers.where((answer) => answer.isCorrect).length;
+    final attempt = AttemptedQuiz(
+      subject: widget.subject, // Use the subject passed to this screen
+      score: score,
+      totalQuestions: widget.userAnswers.length,
+      date: DateTime.now(),
+    );
+    await LocalStorageService.saveAttemptedQuiz(attempt);
   }
 
   @override
@@ -44,7 +63,6 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Calculate score and incorrect answers from the passed list.
     final int totalQuestions = widget.userAnswers.length;
     final int score =
         widget.userAnswers.where((answer) => answer.isCorrect).length;
@@ -55,7 +73,6 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
     String message;
     String emoji;
 
-    // STEP 1: Dynamic emoji based on performance.
     if (percentage >= 0.9) {
       message = 'Excellent!';
       emoji = '🥳';
@@ -79,6 +96,15 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
               MaterialPageRoute(builder: (context) => const MainScreen()),
               (route) => false),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share, color: Colors.white),
+            onPressed: () {
+              Share.share(
+                  'I scored $score/$totalQuestions on the ${widget.subject} quiz in the hellorabbit app! 🐰');
+            },
+          )
+        ],
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -99,7 +125,6 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
                     message: message),
               ),
               const SizedBox(height: 30),
-              // The "Test Analysis" button, which only appears if there were mistakes.
               if (incorrectAnswers.isNotEmpty)
                 _AnalysisButton(
                   onPressed: () {
