@@ -51,6 +51,11 @@ class _QuizLandingScreenState extends State<QuizLandingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width for responsive padding adjustments
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Adjust horizontal padding based on screen width to prevent squishing on small screens
+    final horizontalPadding = screenWidth > 600 ? 60.0 : 20.0; // Larger padding for wider screens
+
     return Scaffold(
       backgroundColor: widget.themeColor,
       appBar: AppBar(
@@ -60,57 +65,71 @@ class _QuizLandingScreenState extends State<QuizLandingScreen> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        // Center the title if you decide to add one later, or just keep leading icon
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Spacer(),
-            // FIX: The main content is now inside a styled card.
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: AppColors.quizDetailCard,
-                borderRadius: BorderRadius.circular(40),
-              ),
-              child: Column(
-                children: [
-                  // IMPROVEMENT: Added a large, playful icon.
-                  Icon(Icons.tune_rounded,
-                      size: 80, color: widget.themeColor),
-                  const SizedBox(height: 16),
-                  Text('Customize Quiz',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.brandDarkBlue)),
-                  const SizedBox(height: 30),
-                  _buildDifficultySelector(),
-                  const SizedBox(height: 30),
-                  _buildQuestionCountSlider(),
-                ],
-              ),
-            ),
-            const Spacer(),
-            _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: Colors.white))
-                : ElevatedButton(
-                    onPressed: _startQuiz,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: widget.themeColor,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25))),
-                    child: Text('Start Quiz',
+      body: SafeArea( // Use SafeArea to avoid notch/status bar overlap
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 20.0), // Responsive horizontal padding
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Removed initial Spacer to allow content to adjust more naturally
+              // The main content is now inside a styled card.
+              Container(
+                padding: const EdgeInsets.all(20.0), // Reduced card padding
+                decoration: BoxDecoration(
+                  color: AppColors.quizDetailCard,
+                  borderRadius: BorderRadius.circular(25), // Reduced border radius
+                  boxShadow: [ // Added a subtle shadow for better depth
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Make column take minimum space
+                  children: [
+                    // IMPROVEMENT: Adjusted icon size.
+                    Icon(Icons.tune_rounded,
+                        size: 60, // Smaller icon size
+                        color: widget.themeColor),
+                    const SizedBox(height: 12), // Reduced spacing
+                    Text('Customize Quiz',
+                        textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
-                            fontSize: 18, fontWeight: FontWeight.bold))),
-            const SizedBox(height: 20),
-          ],
+                            fontSize: 24, // Smaller font size
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.brandDarkBlue)),
+                    const SizedBox(height: 25), // Adjusted spacing
+                    _buildDifficultySelector(),
+                    const SizedBox(height: 25), // Adjusted spacing
+                    _buildQuestionCountSlider(),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30), // Spacing between card and button
+              _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(color: Colors.white))
+                  : ElevatedButton(
+                      onPressed: _startQuiz,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: widget.themeColor,
+                          padding: const EdgeInsets.symmetric(vertical: 16), // Reduced vertical padding
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25))),
+                      child: Text('Start Quiz',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18, fontWeight: FontWeight.bold))),
+              const SizedBox(height: 10), // Small spacing at the bottom
+            ],
+          ),
         ),
       ),
     );
@@ -122,14 +141,16 @@ class _QuizLandingScreenState extends State<QuizLandingScreen> {
       children: [
         Text('Difficulty',
             style: GoogleFonts.poppins(
-                fontSize: 18,
+                fontSize: 16, // Slightly smaller font for label
                 fontWeight: FontWeight.bold,
                 color: AppColors.brandDarkBlue)),
-        const SizedBox(height: 10),
-        // FIX: Wrapped the SegmentedButton in a Row to center it.
+        const SizedBox(height: 8), // Reduced spacing
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Ensure the SegmentedButton adjusts to available width if needed, though it's typically fine.
+            // Consider using a FittedBox if you encounter overflow issues on very small screens,
+            // but for typical mobile screens, it should render well.
             SegmentedButton<String>(
               segments: const [
                 ButtonSegment(value: 'Easy', label: Text('Easy'), icon: Icon(Icons.sentiment_satisfied_alt)),
@@ -146,7 +167,11 @@ class _QuizLandingScreenState extends State<QuizLandingScreen> {
                   backgroundColor: AppColors.screenBackground,
                   foregroundColor: AppColors.brandDarkBlue.withOpacity(0.6),
                   selectedForegroundColor: Colors.white,
-                  selectedBackgroundColor: widget.themeColor),
+                  selectedBackgroundColor: widget.themeColor,
+                  // Tighter padding for segments to reduce overall button width/height
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  textStyle: GoogleFonts.poppins(fontSize: 14), // Smaller text for segments
+              ),
             ),
           ],
         ),
@@ -160,7 +185,7 @@ class _QuizLandingScreenState extends State<QuizLandingScreen> {
       children: [
         Text('Number of Questions: ${_questionCount.toInt()}',
             style: GoogleFonts.poppins(
-                fontSize: 18,
+                fontSize: 16, // Slightly smaller font for label
                 fontWeight: FontWeight.bold,
                 color: AppColors.brandDarkBlue)),
         Slider(

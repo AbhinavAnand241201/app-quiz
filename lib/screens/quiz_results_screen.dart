@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_app/models/quiz_model.dart';
 import 'package:quiz_app/screens/test_analysis_screen.dart';
@@ -100,8 +100,14 @@ class _QuizResultsScreenState extends State<QuizResultsScreen>
           IconButton(
             icon: const Icon(Icons.share, color: Colors.white),
             onPressed: () {
-              Share.share(
-                  'I scored $score/$totalQuestions on the ${widget.subject} quiz in the hellorabbit app! 🐰');
+              // --- START of UI/Feature Improvement ---
+              final String shareText =
+                  'I just scored $score out of $totalQuestions on the "${widget.subject}" quiz in the Hellorabbit app! '
+                  '$message $emoji '
+                  'Challenge me or try it yourself! Download the app today! #HellorabbitQuiz #QuizResults';
+              // You can add a URL to your app here if you have one, e.g., 'https://your_app_store_link.com'
+              Share.share(shareText);
+              // --- END of UI/Feature Improvement ---
             },
           )
         ],
